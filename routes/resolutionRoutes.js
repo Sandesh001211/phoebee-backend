@@ -7,6 +7,8 @@ const router = express.Router();
    SAVE OR UPDATE RESOLUTIONS
 ================================ */
 router.post("/", async (req, res) => {
+  console.log("🔥 POST HIT", req.body);
+
   try {
     const { date, resolutions } = req.body;
 
@@ -27,9 +29,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-router.post("/", async (req, res) => {
-  console.log("🔥 POST HIT", req.body);
 
 /* ===============================
    GET RESOLUTIONS BY DATE

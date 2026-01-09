@@ -7,19 +7,25 @@ import resolutionRoutes from "./routes/resolutionRoutes.js";
 dotenv.config();
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Phoebee backend is running 🚀");
+});
+
 app.use("/api/resolutions", resolutionRoutes);
 
-const PORT = process.env.PORT || 5000;
+// 🔴 VERY IMPORTANT: Render provides PORT
+const PORT = process.env.PORT || 10000;
 
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("✅ MongoDB connected");
 
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
   })
