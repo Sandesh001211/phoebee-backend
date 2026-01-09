@@ -8,8 +8,9 @@ dotenv.config();
 
 const app = express();
 
+/* 🔴 THIS LINE WAS MISSING */
+app.use(express.json());   // <-- REQUIRED
 app.use(cors());
-app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Phoebee backend is running 🚀");
@@ -17,7 +18,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/resolutions", resolutionRoutes);
 
-// 🔴 VERY IMPORTANT: Render provides PORT
 const PORT = process.env.PORT || 10000;
 
 mongoose
