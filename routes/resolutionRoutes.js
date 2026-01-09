@@ -3,41 +3,42 @@ import Resolution from "../models/dayResolution.js";
 
 const router = express.Router();
 
-/* SAVE OR UPDATE RESOLUTIONS */
+/* ===============================
+   SAVE OR UPDATE RESOLUTIONS
+================================ */
 router.post("/", async (req, res) => {
-  const { date, resolutions } = req.body;
-
-  if (!date || !resolutions) {
-    return res.status(400).json({ error: "Missing date or resolutions" });
-  }
-
   try {
-    const doc = await Resolution.findOneAndUpdate(
+    const { date, resolutions } = req.body;
+
+    if (!date || !Array.isArray(resolutions)) {
+      return res.status(400).json({ error: "Invalid payload" });
+    }
+
+    const saved = await Resolution.findOneAndUpdate(
       { date },
       { date, resolutions },
       { upsert: true, new: true }
     );
 
-    res.status(200).json(doc);
-  } catch (error) {
-    console.error("POST error:", error.message);
-    res.status(500).json({ error: error.message });
+    console.log("✅ Saved:", saved.date);
+    res.json(saved);
+  } catch (err) {
+    console.error("❌ POST error:", err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
-/* GET RESOLUTIONS BY DATE */
+/* ===============================
+   GET RESOLUTIONS BY DATE
+================================ */
 router.get("/:date", async (req, res) => {
   try {
     const doc = await Resolution.findOne({ date: req.params.date });
-
-    if (!doc) {
-      return res.status(200).json(null);
-    }
-
-    res.status(200).json(doc);
-  } catch (error) {
-    console.error("GET error:", error.message);
-    res.status(500).json({ error: error.message });
+    console.log("📥 Fetched:", req.params.date, doc ? "FOUND" : "NULL");
+    res.json(doc);
+  } catch (err) {
+    console.error("❌ GET error:", err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
