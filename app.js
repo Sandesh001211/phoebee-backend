@@ -14,14 +14,9 @@ app.get("/", (req, res) => {
   res.send("Phoebee Backend is running 🚀");
 });
 
-const log_request = async (req, res, next) => {
-  console.log(`${req.method} ${req.originalUrl}`);
-  next()
-};
-
 // 🔗 API ROUTES
 import resolutionRoutes from "./routes/resolutionRoutes.js";
-app.use("/api/resolutions", log_request,resolutionRoutes);
+app.use("/api/resolutions", resolutionRoutes);
 
 // 🔗 DB CONNECT
 mongoose
@@ -30,4 +25,6 @@ mongoose
   .catch((err) => console.log(err));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
+);
