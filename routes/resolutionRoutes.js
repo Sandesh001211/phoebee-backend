@@ -3,30 +3,41 @@ import Resolution from "../models/dayResolution.js";
 
 const router = express.Router();
 
-/* SAVE OR UPDATE */
+/* SAVE OR UPDATE RESOLUTIONS */
 router.post("/", async (req, res) => {
   const { date, resolutions } = req.body;
 
+  if (!date || !resolutions) {
+    return res.status(400).json({ error: "Missing date or resolutions" });
+  }
+
   try {
-    const updated = await Resolution.findOneAndUpdate(
+    const doc = await Resolution.findOneAndUpdate(
       { date },
-      { resolutions },
-      { new: true, upsert: true }
+      { date, resolutions },
+      { upsert: true, new: true }
     );
 
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(200).json(doc);
+  } catch (error) {
+    console.error("POST error:", error.message);
+    res.status(500).json({ error: error.message });
   }
 });
 
-/* GET BY DATE */
+/* GET RESOLUTIONS BY DATE */
 router.get("/:date", async (req, res) => {
   try {
-    const data = await Resolution.findOne({ date: req.params.date });
-    res.json(data || {});
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const doc = await Resolution.findOne({ date: req.params.date });
+
+    if (!doc) {
+      return res.status(200).json(null);
+    }
+
+    res.status(200).json(doc);
+  } catch (error) {
+    console.error("GET error:", error.message);
+    res.status(500).json({ error: error.message });
   }
 });
 
