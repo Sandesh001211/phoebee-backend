@@ -1,44 +1,38 @@
 import express from "express";
-import DayResolution from "../models/dayResolution.js";
+import Resolution from "../models/Resolution.js";
 
 const router = express.Router();
 
-/* 🔹 GET resolutions for a date */
+/* 🔹 GET BY DATE */
 router.get("/:date", async (req, res) => {
-  const data = await DayResolution.findOne({ date: req.params.date });
-  res.json(data);
+  try {
+    const data = await Resolution.findOne({
+      date: req.params.date,
+    });
+
+    res.json(data);
+  } catch (err) {
+    console.error("GET ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
-/* 🔹 CREATE or UPDATE resolutions for a date */
+/* 🔹 SAVE / UPDATE */
 router.post("/", async (req, res) => {
   const { date, resolutions } = req.body;
 
-  let dayData = await DayResolution.findOne({ date });
+  try {
+    const saved = await Resolution.findOneAndUpdate(
+      { date },
+      { resolutions },
+      { new: true, upsert: true }
+    );
 
-  if (dayData) {
-    dayData.resolutions = resolutions;
-    await dayData.save();
-  } else {
-    dayData = new DayResolution({ date, resolutions });
-    await dayData.save();
+    res.json(saved);
+  } catch (err) {
+    console.error("POST ERROR:", err);
+    res.status(500).json({ error: err.message });
   }
-
-  res.json(dayData);
-});
-
-/* 🔹 DELETE one resolution */
-router.delete("/:date/:id", async (req, res) => {
-  const { date, id } = req.params;
-
-  const dayData = await DayResolution.findOne({ date });
-  if (!dayData) return res.json(null);
-
-  dayData.resolutions = dayData.resolutions.filter(
-    (r) => r._id.toString() !== id
-  );
-
-  await dayData.save();
-  res.json(dayData);
 });
 
 export default router;

@@ -1,17 +1,20 @@
 import mongoose from "mongoose";
 
-const resolutionSchema = new mongoose.Schema({
-  text: String,
-  done: Boolean,
-});
-
-const dayResolutionSchema = new mongoose.Schema({
-  date: {
-    type: String, // YYYY-MM-DD
-    required: true,
-    unique: true,
+const ResolutionSchema = new mongoose.Schema(
+  {
+    date: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    resolutions: [
+      {
+        text: String,
+        done: Boolean,
+      },
+    ],
   },
-  resolutions: [resolutionSchema],
-});
+  { timestamps: true }
+);
 
-export default mongoose.model("DayResolution", dayResolutionSchema);
+export default mongoose.model("Resolution", ResolutionSchema);
