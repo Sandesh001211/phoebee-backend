@@ -16,10 +16,17 @@ app.get("/", (req, res) => {
 
 app.use("/api/resolutions", resolutionRoutes);
 
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log("DB error:", err));
+mongoose.connect(process.env.MONGO_URL, {
+  serverSelectionTimeoutMS: 15000,
+  ssl: true,
+  tlsAllowInvalidCertificates: true,
+})
+.then(() => {
+  console.log("✅ MongoDB connected successfully");
+})
+.catch((err) => {
+  console.error("❌ MongoDB connection error:", err.message);
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
