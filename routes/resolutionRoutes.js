@@ -28,6 +28,9 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  console.log("🔥 POST HIT", req.body);
+
 /* ===============================
    GET RESOLUTIONS BY DATE
 ================================ */
